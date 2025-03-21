@@ -1,6 +1,11 @@
 package dev.ropimasi.ftpchecker;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.net.ftp.FTPClient;
@@ -13,17 +18,32 @@ public class FtpConnTest {
 
 	public static void main(String[] args) {
 		List<FtpServerRec> servers = new ArrayList<>();
-		servers.add(new FtpServerRec("servidor1", 21, "usuario1", "senha1"));
-		servers.add(new FtpServerRec("servidor2", 21, "usuario2", "senha2"));
-		// Adicione mais servidores conforme necessário
+		try (Connection conn = getConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM server")) {
+			while (rs.next()) {
+				servers.add(new FtpServerRec(rs.getString("host"), rs.getInt("port"), rs.getString("user"), rs.getString("pass")));
+			}
+		} catch (SQLException e) {
+			System.err.println("Erro ao acessar o banco de dados: " + e.getMessage());
+			return;
+		}
 
 		for (FtpServerRec aServer : servers) {
-			System.out.println("\nDEBUG:  iteração.");
-			boolean connected = testFtpConn(aServer.server(), aServer.port(), aServer.user(),
-					aServer.pass());
-			System.out.println("Teste de conexão FTP em " + aServer.server() + ": "
-					+ (connected ? "Bem-sucedido" : "Falhou"));
+			System.out.println("\nDEBUG: iteração.");
+			boolean connected = testFtpConn(aServer.server(), aServer.port(), aServer.user(), aServer.pass());
+			System.out.println(
+					"Teste de conexão FTP em " + aServer.server() + ": " + (connected ? "Bem-sucedido" : "Falhou"));
 		}
+	}
+
+
+
+	public static Connection getConnection() throws SQLException {
+		String url = "jdbc:postgresql://localhost:5432/ftpchecker";
+		String user = "postgres";
+		String password = "postgres";
+		return DriverManager.getConnection(url, user, password);
 	}
 
 
@@ -47,8 +67,8 @@ public class FtpConnTest {
 			if (!login) {
 				int loginResponseCode = ftpClient.getReplyCode();
 				String loginResponseDescription = ftpClient.getReplyString();
-				System.out.println(
-						"Falha no login FTP em " + server + ": " + loginResponseCode + " - " + loginResponseDescription);
+				System.out.println("Falha no login FTP em " + server + ": " + loginResponseCode + " - "
+						+ loginResponseDescription);
 				return false;
 			}
 
