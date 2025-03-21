@@ -18,22 +18,28 @@ public class FtpConnTest {
 
 	public static void main(String[] args) {
 		List<FtpServerRec> servers = new ArrayList<>();
-		try (Connection conn = getConnection();
-				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM server")) {
-			while (rs.next()) {
-				servers.add(new FtpServerRec(rs.getString("host"), rs.getInt("port"), rs.getString("user"), rs.getString("pass")));
-			}
-		} catch (SQLException e) {
-			System.err.println("Erro ao acessar o banco de dados: " + e.getMessage());
-			return;
-		}
+		loadServerListFromDB(servers);
 
 		for (FtpServerRec aServer : servers) {
 			System.out.println("\nDEBUG: iteração.");
 			boolean connected = testFtpConn(aServer.server(), aServer.port(), aServer.user(), aServer.pass());
 			System.out.println(
 					"Teste de conexão FTP em " + aServer.server() + ": " + (connected ? "Bem-sucedido" : "Falhou"));
+		}
+	}
+
+
+
+	private static void loadServerListFromDB(List<FtpServerRec> servers) {
+		try (Connection conn = getConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM server;")) {
+			while (rs.next()) {
+				servers.add(new FtpServerRec(rs.getString("host"), rs.getInt("port"), rs.getString("user"), rs.getString("pass")));
+			}
+		} catch (SQLException e) {
+			System.err.println("Erro ao acessar o banco de dados: " + e.getMessage());
+			return;
 		}
 	}
 
