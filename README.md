@@ -33,10 +33,10 @@ _(dev.ropimasi.ftpchecker)_
 
 <a name="description"></a>
 ## DESCRIPTION
-* SUBJECT: Java application to change the wallpaper of Gnome Desktop Environment;
+* SUBJECT: Java application to ... // TO DO...;
 * PROJECT NAME: **FTPCHECKER**;
 * LIBRARY NAME: **---**;
-* WHAT IS: **FTPCHECKER** is a small software aims to change the wallpaper image of Gnome Desktop randomly. Developed for Linux with Gnome Desktop Environment. More information about versions and compatibility can be found below;
+* WHAT IS: **FTPCHECKER** ... // TO DO...;
 * TO WIT: The **FTPCHECKER** and its resources are a project sample, which I have developing to demonstrate some of my abilities. The **FTPCHECKER** project belongs to my personal portfolio. Its detailed project can be followed just here on GitHub: [github.com/users/ROPIMASI/projects/](https://github.com/users/ROPIMASI/projects/). It is also found on my web-portfolio: [ropimasi.dev/portfolio](https://ropimasi.dev/portfolio).  
 
 &nbsp;  
